@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: setubid-postgres
+    environment:
+      POSTGRES_DB: setubid
+      POSTGRES_USER: setubid
+      POSTGRES_PASSWORD: setubid
+    ports:
+      - "5434:5432"
+    volumes:
+      - setubid_data:/var/lib/postgresql/data
+
+volumes:
+  setubid_data:

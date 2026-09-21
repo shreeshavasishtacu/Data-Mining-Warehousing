@@ -1,0 +1,195 @@
+QUESTION 2 - PART E
+RETRIEVAL WORKLOAD SKEW AND MITIGATION
+======================================================================
+
+Corpus notices: 12,000
+MinHash band rows: 768,000
+Labelled pairs: 900
+Labelled SAME pairs: 279
+Labelled DIFFERENT pairs: 621
+
+A. BASELINE
+----------------------------------------------------------------------
+Runtime: 1.4799 seconds
+Notices measured: 12,000
+Total candidate work: 1,049,884
+Mean candidate work/notice: 87.49
+Median: 60.00
+P95: 277.00
+P99: 349.00
+Maximum: 428
+
+B. TOP NOTICE HOTSPOTS
+----------------------------------------------------------------------
+notice_id	portal_id	candidate_work
+N008975	P241	428
+N008976	P027	422
+N008981	P093	422
+N008982	P100	422
+N002116	P181	420
+N008983	P049	420
+N008978	P020	419
+N002112	P044	418
+N008905	P042	415
+N002118	P239	411
+N008911	P241	411
+N002115	P094	409
+N006813	P129	409
+N008906	P057	405
+N004968	P189	403
+N008907	P129	401
+N008912	P094	400
+N006809	P094	399
+N004974	P091	398
+N005158	P069	397
+
+C. PORTAL CONTRIBUTION TO WORK
+----------------------------------------------------------------------
+portal	notices	candidate_work	percent
+P094	1,426	129,296	12.32%
+P002	800	60,042	5.72%
+P006	792	58,595	5.58%
+P001	778	56,187	5.35%
+P003	772	55,117	5.25%
+P004	755	53,824	5.13%
+P005	768	52,578	5.01%
+P020	384	42,750	4.07%
+P240	377	34,274	3.26%
+P044	224	26,910	2.56%
+P215	153	17,705	1.69%
+P181	133	13,930	1.33%
+P088	97	12,655	1.21%
+P227	107	11,869	1.13%
+P189	90	9,796	0.93%
+P136	91	9,270	0.88%
+P146	79	8,832	0.84%
+P232	79	8,668	0.83%
+P200	79	8,367	0.80%
+P141	46	6,314	0.60%
+
+D. MOST FREQUENT MINHASH BANDS
+----------------------------------------------------------------------
+band_no	band_hash	document_frequency
+3	-4414336504474266223	54
+58	-2202221047609248325	53
+51	-6174233618477248556	51
+44	5014250297920653008	49
+8	-6423781628270161091	49
+24	-465341757513703490	46
+38	-6654013444179632055	43
+17	1292988202176298015	43
+61	-1718038348327317018	41
+38	8840705310212016861	35
+30	-8899568270293034113	33
+19	1161389867023633856	30
+44	-5239727399408505858	30
+3	5790102192083293710	30
+51	-2437233418541352791	27
+0	-791002582969486203	27
+51	4712131855085383816	27
+17	5874719500525958918	26
+41	7751665444357182671	25
+61	4145954453663580006	25
+
+E. BASELINE LABELLED-PAIR RETRIEVAL
+----------------------------------------------------------------------
+SAME pairs survived: 274/279
+SAME recall: 0.9821
+DIFFERENT pairs entering candidates: 0/621
+DIFFERENT candidate rate: 0.0000
+
+F. MITIGATION TESTS
+----------------------------------------------------------------------
+Mitigation: ignore MinHash bands whose document frequency exceeds the threshold.
+
+threshold=1000 | runtime=1.3324s | work=1,049,884 | median=60 | p95=277 | p99=349 | max=428 | SAME_recall=0.9821
+threshold=500 | runtime=1.2692s | work=1,049,884 | median=60 | p95=277 | p99=349 | max=428 | SAME_recall=0.9821
+threshold=250 | runtime=1.3125s | work=1,049,884 | median=60 | p95=277 | p99=349 | max=428 | SAME_recall=0.9821
+threshold=150 | runtime=1.2945s | work=1,049,884 | median=60 | p95=277 | p99=349 | max=428 | SAME_recall=0.9821
+threshold=100 | runtime=1.2538s | work=1,049,884 | median=60 | p95=277 | p99=349 | max=428 | SAME_recall=0.9821
+threshold=75 | runtime=1.2658s | work=1,049,884 | median=60 | p95=277 | p99=349 | max=428 | SAME_recall=0.9821
+threshold=50 | runtime=1.2857s | work=1,041,716 | median=60 | p95=277 | p99=349 | max=428 | SAME_recall=0.9821
+threshold=25 | runtime=1.2735s | work=1,022,078 | median=58 | p95=274 | p99=346 | max=428 | SAME_recall=0.9821
+threshold=10 | runtime=1.2774s | work=1,005,846 | median=57 | p95=272 | p99=343 | max=428 | SAME_recall=0.9821
+
+G. CHOSEN MITIGATION
+----------------------------------------------------------------------
+Maximum allowed band document frequency: 10
+No tested threshold preserved every labelled SAME pair; selected the threshold with the highest measured SAME recall and then lowest candidate work.
+
+H. AFTER MITIGATION
+----------------------------------------------------------------------
+Runtime: 1.2774 seconds
+Total candidate work: 1,005,846
+Mean candidate work/notice: 83.82
+Median: 57.00
+P95: 272.00
+P99: 343.01
+Maximum: 428
+
+Candidate-work reduction: 4.19%
+
+I. RETRIEVAL QUALITY COST
+----------------------------------------------------------------------
+SAME recall before: 0.9821
+SAME recall after: 0.9821
+Change in SAME recall: +0.0000
+SAME pairs before: 274/279
+SAME pairs after: 274/279
+
+J. DIFFERENT-PAIR EFFECT
+----------------------------------------------------------------------
+DIFFERENT candidate rate before: 0.0000
+DIFFERENT candidate rate after: 0.0000
+
+K. TOP HOTSPOTS AFTER MITIGATION
+----------------------------------------------------------------------
+notice_id	portal_id	candidate_work
+N008975	P241	428
+N008976	P027	422
+N008981	P093	422
+N008982	P100	422
+N002116	P181	420
+N008983	P049	420
+N008978	P020	419
+N002112	P044	418
+N008905	P042	415
+N002118	P239	411
+N008911	P241	411
+N002115	P094	409
+N008906	P057	405
+N004968	P189	403
+N008907	P129	401
+N008912	P094	400
+N006813	P129	399
+N004974	P091	398
+N005158	P069	397
+N004975	P094	394
+
+L. 20-MINUTE NIGHTLY BUDGET
+----------------------------------------------------------------------
+Budget: 1200 seconds
+Measured baseline retrieval: 1.4799 seconds
+Measured mitigated retrieval: 1.2774 seconds
+Baseline within budget: True
+Mitigated within budget: True
+
+M. MECHANICAL EXPLANATION
+----------------------------------------------------------------------
+The retrieval structure groups notices through shared MinHash bands. A band appearing in many notices produces a large candidate bucket. Every notice containing that band therefore inherits candidate-generation work from the frequency of that band.
+The portal_profiles.md notes explain why this corpus can produce this skew. P001-P006 are nodal aggregation services and repeatedly paste approximately 1,400 characters of legal preamble into notices. P001, P002 and P005 also append a disclaimer footer. Short notices can therefore consist mostly of repeated portal boilerplate.
+Repeated boilerplate creates repeated text shingles. Those repeated shingles can generate common MinHash bands, which creates high-document-frequency buckets and therefore a disproportionate amount of candidate-generation work.
+The mitigation removes only bands whose document frequency exceeds the measured threshold. Less frequent bands remain available to retrieve genuinely similar notices.
+The threshold was selected from measurements on the supplied labelled pairs rather than from an arbitrary tutorial value. Its retrieval-quality cost is reported using the same labelled-pair set.
+
+N. SUBMISSION SUMMARY
+----------------------------------------------------------------------
+Baseline work: 1,049,884
+Baseline P99: 349
+Baseline maximum: 428
+Chosen frequency threshold: 10
+Mitigated work: 1,005,846
+Work reduction: 4.19%
+SAME recall before: 0.9821
+SAME recall after: 0.9821
+Quality change: +0.0000
